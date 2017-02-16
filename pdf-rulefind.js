@@ -1,5 +1,9 @@
 //Attempt to find a specific rule in a pdf file
 //Do note that you will have to handle input validation externally.
+
+var connect=require('connect');
+var serveStatic=require('serve-static');
+
 var filename;
 var keywords;
 function handleParams() {
@@ -15,3 +19,7 @@ function handleParams() {
     console.log("search " + filename + " for " + keywords);
 }
 handleParams();
+
+connect().use(serveStatic(__dirname)).listen(8080, function() {
+    console.log("Running on 8080...")
+});
