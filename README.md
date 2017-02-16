@@ -17,6 +17,8 @@ You will need to have nodejs installed.
 ####Pdf-Rulefinder
 The following commands will install the dependencies for the rulefinding tool
 First, make sure that npm and nodejs are installed, then run the following commands.
+
 `$npm install -g connect serve-static
+
 `$npm link connect && npm link serve-static
 
