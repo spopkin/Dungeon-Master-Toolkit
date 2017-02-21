@@ -1,0 +1,26 @@
+<!Doctype html>
+<html lang="en">
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <title>
+            "Search Rulebook Library"
+        </title>
+        <body>
+            <h1>Search PDF Rulebooks for specific rules</h1>
+            <div ng-app="">
+                <p>{{"this will" + " use angular"}}</p>
+                <form>
+                    <input type="text" name="keyword-list">
+                    <br/>
+                    <select multiple name="booklist">
+                        <option value="test1">test1</option>
+                        <option value="test2">test2</option>
+                        <option value="test3">test3</option>
+                    </select>
+                    <br/>
+                    <input type="submit" value="Search for keywords">
+                </form>
+            </div>
+        </body>
+    </head>
+</html>

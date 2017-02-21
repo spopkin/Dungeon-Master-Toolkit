@@ -3,7 +3,7 @@
 
 var connect=require('connect');
 var serveStatic=require('serve-static');
-
+/*
 var filename;
 var keywords;
 function handleParams() {
@@ -19,6 +19,7 @@ function handleParams() {
     console.log("search " + filename + " for " + keywords);
 }
 handleParams();
+*/
 
 connect().use(serveStatic(__dirname)).listen(8080, function() {
     console.log("Running on 8080...")
