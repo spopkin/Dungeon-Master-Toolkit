@@ -6,6 +6,9 @@ var configFile = '/etc/dmtk/pdf-rulefind-config.json';
 var ruleBookDirDefault = "/usr/share/dmtk/rulebooks";
 var ruleBookDir = ruleBookDirDefault;
 
+//treat the user as a game master. 
+var userIsDM = 0;
+
 //Read in and parse config file
 var config = JSON.parse(fs.readFileSync(configFile, 'utf8'));
 ruleBookDirConfigured = config.ruleDirectory;
@@ -40,8 +43,15 @@ app.get('/books', function(req, res) {
 
         var whiteListedBookArray = [];
 
+        //are dungeon masters immune to black and white listing of books?
+        if (config.dmsOverrideBlackWhiteLists) {
+            console.log("game masters can see all books");
+        } else {
+            console.log("DMs are mortal");
+        }
+        var override = config.dmsOverrideBlackWhiteLists && userIsDM;
         //is book whitelisting enabled
-        if (config.bookWhitelist) {
+        if (config.bookWhitelist && !override) {
             console.log("allowed books are whitelisted");
 //            console.log("whitelist: " + config.whiteList);
             var whitelist = config.whiteList;
@@ -57,7 +67,7 @@ app.get('/books', function(req, res) {
             }
         }
         //is book blacklisting enabled
-        if (config.bookBlackList) {
+        if (config.bookBlackList && !override) {
             console.log("disallowed books are blacklisted");
 //            console.log("blackList: " + config.blackList);
             var blackList = config.blackList;
@@ -69,12 +79,6 @@ app.get('/books', function(req, res) {
             }
         } else {
             console.log("blacklisting disabled");
-        }
-        //are dungeon masters immune to black and white listing of books?
-        if (config.dmsOverrideBlackWhiteLists) {
-            console.log("game masters can see all books");
-        } else {
-            console.log("DMs are mortal");
         }
         var jsonContents = JSON.stringify(whiteListedBookArray);
         res.send(jsonContents);
