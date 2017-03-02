@@ -15,6 +15,12 @@ app.get('/', function(req, res) {
     res.redirect('/pdf-rulefind.html');
 });
 
+app.get('/search', function(req, res) {
+    console.log("books list: " + req.query.books);
+    console.log("keyword list: " + req.query.keywords);
+    res.send('Search');
+});
+
 console.log('Started');
 console.log('Using ' + config.ruleDirectory + ' as rulebook directory.');
 

@@ -1,7 +1,13 @@
 <!Doctype html>
 <html lang="en">
     <head>
+        <link rel="stylesheet" type="text/css" href="style.css">
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script>
+            function selectAll() {
+                alert("hi");
+            }
+        </script>
         <title>
             "Search Rulebook Library"
         </title>
@@ -11,6 +17,8 @@
                 <p>{{"this will" + " use angular"}}</p>
                 <form>
                     <input type="text" name="keyword-list">
+                    <br/>
+                    <button onclick="selectAll()">Select All</button>
                     <br/>
                     <select multiple name="booklist">
                         <option value="test1">test1</option>
