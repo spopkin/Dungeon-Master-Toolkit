@@ -21,6 +21,13 @@ app.get('/search', function(req, res) {
     res.send('Search');
 });
 
+app.get('/books', function(req, res) {
+    fs.exists("/usr/share/dmtk/rulebooks",function(exists){
+        res.send("Exists");
+        // handle result
+    });
+});
+
 console.log('Started');
 console.log('Using ' + config.ruleDirectory + ' as rulebook directory.');
 
