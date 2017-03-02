@@ -35,23 +35,49 @@ app.get('/books', function(req, res) {
         var dirContents = fs.readdirSync(ruleBookDir);
         console.log("Rulebook directory contents:");
         console.log(dirContents);
-        var jsonContents = JSON.stringify(dirContents);
-        res.send(jsonContents);
+//        var jsonContents = JSON.stringify(dirContents);
+//        res.send(jsonContents);
+
+        var whiteListedBookArray = [];
 
         //is book whitelisting enabled
         if (config.bookWhitelist) {
             console.log("allowed books are whitelisted");
-            console.log("whitelist: " + config.whiteList);
-        } 
+//            console.log("whitelist: " + config.whiteList);
+            var whitelist = config.whiteList;
+            for (var index in dirContents) {
+                if (whitelist.indexOf(dirContents[index]) > -1) {
+                    whiteListedBookArray.push(dirContents[index]);
+                } 
+            }
+        } else {
+            console.log("whitelisting disabled");
+            for (var index in dirContents) {
+                whiteListedBookArray.push(dirContents[index]);
+            }
+        }
         //is book blacklisting enabled
         if (config.bookBlackList) {
             console.log("disallowed books are blacklisted");
-            console.log("blackList: " + config.blackList);
+//            console.log("blackList: " + config.blackList);
+            var blackList = config.blackList;
+            for (var index in blackList) {
+                var bookExistsIndex = whiteListedBookArray.indexOf(config.blackList[index]);
+                if (bookExistsIndex > -1) {
+                    whiteListedBookArray.splice(bookExistsIndex, 1);
+                }
+            }
+        } else {
+            console.log("blacklisting disabled");
         }
         //are dungeon masters immune to black and white listing of books?
         if (config.dmsOverrideBlackWhiteLists) {
             console.log("game masters can see all books");
+        } else {
+            console.log("DMs are mortal");
         }
+        var jsonContents = JSON.stringify(whiteListedBookArray);
+        res.send(jsonContents);
     });
 });
 
