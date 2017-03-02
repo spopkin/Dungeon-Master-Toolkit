@@ -2,9 +2,11 @@
 var serveStatic = require('serve-static');
 var express = require('express');
 var fs = require('fs');
+var ruleBookDir = "/usr/share/dmtk/rulebooks";
+var configFile = '/etc/dmtk/pdf-rulefind-config.json';
 
 //Read in and parse config file
-var config = JSON.parse(fs.readFileSync('/etc/dmtk/pdf-rulefind-config.json', 'utf8'));
+var config = JSON.parse(fs.readFileSync(configFile, 'utf8'));
 
 //Prepare to rest
 var app = express();
@@ -22,8 +24,13 @@ app.get('/search', function(req, res) {
 });
 
 app.get('/books', function(req, res) {
-    fs.exists("/usr/share/dmtk/rulebooks",function(exists){
-        res.send("Exists");
+    fs.exists(ruleBookDir,function(exists){
+        //res.send("Exists");
+        var dirContents = fs.readdirSync(ruleBookDir);
+        console.log("Rulebook directory contents:");
+        console.log(dirContents);
+        var jsonContents = JSON.stringify(dirContents);
+        res.send(jsonContents);
         // handle result
     });
 });
