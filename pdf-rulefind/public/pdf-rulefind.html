@@ -5,11 +5,42 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script>
+            function submitSearch() {
+                var bookList = [];
+                var bookListNodeOptions = document.getElementById("booklist").options;
+                for (var i in bookListNodeOptions) {
+                    if (bookListNodeOptions[i].selected) {
+                        bookList.push(bookListNodeOptions[i].value);
+                    }
+                }
+                var keywordsText = document.getElementById("keyword-list");
+                var keywordsList = keywordsText.value.split(" ");
+                var objToSend = {};
+                objToSend.books = bookList;
+                objToSend.keywords = keywordsList;
+                $.ajax({
+                    url: 'http://localhost:8080/search',
+                    type: 'GET',
+                    data: objToSend,
+                    success: function( data ) { 
+                        alert("submitted and got: " + data);
+                    }
+                });
+            }
+
             //select all books in the book list
             function selectAll() {
                 var bookListNodeOptions = document.getElementById("booklist").options;
                 for (var i in bookListNodeOptions) {
                     bookListNodeOptions[i].selected=true; 
+                }
+            }
+
+            //select all books in the book list
+            function deSelectAll() {
+                var bookListNodeOptions = document.getElementById("booklist").options;
+                for (var i in bookListNodeOptions) {
+                    bookListNodeOptions[i].selected=false; 
                 }
             }
 
@@ -38,18 +69,22 @@
         </title>
         <body onload="populateBookList();">
             <h1>Search PDF Rulebooks for specific rules</h1>
-            <div ng-app="">
-                <p>{{"this will" + " use angular"}}</p>
-                <form>
-                    <input type="text" id="keyword-list">
-                    <br/>
-                    <button onclick="selectAll()">Select All</button>
-                    <br/>
-                    <select multiple id="booklist">
-                    </select>
-                    <br/>
-                    <input type="submit" value="Search for keywords">
-                </form>
+            <form onsubmit="return false">
+                <label for="keyword-list">List of keywords to search for:</label>
+                <br/>
+                <input type="text" id="keyword-list" placeholder="keywords">
+                <br/>
+                <br/>
+                <button onclick="selectAll()">Select All</button>
+                <button onclick="deSelectAll()">Deselect All</button>
+                <br/>
+                <select multiple id="booklist">
+                </select>
+                <br/>
+                <input type="submit" value="Search for keywords" onclick="submitSearch()">
+            </form>
+            <h3 hidden=true>Results:</h3>
+            <div id="resultsbox" hidden=true>
             </div>
         </body>
     </head>

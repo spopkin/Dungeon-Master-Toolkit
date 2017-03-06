@@ -48,7 +48,7 @@ app.get('/', function(req, res) {
 
 app.get('/search', function(req, res) {
     console.log("books list: " + req.query.books);
-    console.log("keyword list: " + req.query.keywords);
+    console.log("keywords list: " + req.query.keywords);
     res.send('Search');
 });
 
