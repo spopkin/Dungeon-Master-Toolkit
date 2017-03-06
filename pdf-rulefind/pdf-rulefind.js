@@ -2,6 +2,9 @@
 var serveStatic = require('serve-static');
 var express = require('express');
 var fs = require('fs');
+var commander = require('commander');
+
+//file paths
 var configFile = '/etc/dmtk/pdf-rulefind-config.json';
 var ruleBookDirDefault = "/usr/share/dmtk/rulebooks";
 var ruleBookDir = ruleBookDirDefault;
@@ -9,13 +12,30 @@ var ruleBookDir = ruleBookDirDefault;
 //treat the user as a game master. 
 var userIsDM = 0;
 
-//Read in and parse config file
-var config = JSON.parse(fs.readFileSync(configFile, 'utf8'));
-ruleBookDirConfigured = config.ruleDirectory;
-if (ruleBookDirConfigured != null && ruleBookDirConfigured != "") {
-    console.log("Rulebook directory configured to be: " + ruleBookDirConfigured);
-    ruleBookDir = ruleBookDirConfigured;
+var config = null;
+
+//command line handling
+function cliHandler() {
+
 }
+
+//Read in and parse config file
+function parseConfig() {
+    config = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+}
+
+function configureRuleBookDir() {
+    ruleBookDirConfigured = config.ruleDirectory;
+    if (ruleBookDirConfigured != null && ruleBookDirConfigured != "") {
+        console.log("Rulebook directory configured to be: " + ruleBookDirConfigured);
+        ruleBookDir = ruleBookDirConfigured;
+    }
+}
+
+//Run setup tasks
+cliHandler();
+parseConfig();
+configureRuleBookDir();
 
 //Prepare to rest
 var app = express();

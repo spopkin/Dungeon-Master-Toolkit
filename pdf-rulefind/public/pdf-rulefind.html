@@ -3,27 +3,47 @@
     <head>
         <link rel="stylesheet" type="text/css" href="style.css">
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script>
             function selectAll() {
                 alert("hi");
+            }
+
+            function populateBookList() {
+                $.ajax({
+                    url: 'http://localhost:8080/books',
+                    type: 'GET',
+                    success: function( data ) { 
+                        var bookListNode = document.getElementById("booklist");
+                        var bookSet = "";
+                        var items = JSON.parse(data);
+                        for (var i in items) {
+//                            bookSet = bookSet + "\n" + items[i];
+//                            bookSet = bookSet + "<option value='" + items[i] + "'>" + items[i] + "</option>\n";
+                            var option = document.createElement("option");
+                            option.setAttribute('value', items[i]);
+                            option.appendChild(document.createTextNode(items[i]));
+                            bookListNode.appendChild(option);
+//                            node.appendChild(document.createElement("option"));
+                        }
+                        bookListNode.hide().show(0);
+                    }
+                });
             }
         </script>
         <title>
             "Search Rulebook Library"
         </title>
-        <body>
+        <body onload="populateBookList();">
             <h1>Search PDF Rulebooks for specific rules</h1>
             <div ng-app="">
                 <p>{{"this will" + " use angular"}}</p>
                 <form>
-                    <input type="text" name="keyword-list">
+                    <input type="text" id="keyword-list">
                     <br/>
                     <button onclick="selectAll()">Select All</button>
                     <br/>
-                    <select multiple name="booklist">
-                        <option value="test1">test1</option>
-                        <option value="test2">test2</option>
-                        <option value="test3">test3</option>
+                    <select multiple id="booklist">
                     </select>
                     <br/>
                     <input type="submit" value="Search for keywords">
