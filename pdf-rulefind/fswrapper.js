@@ -1,7 +1,8 @@
 //Import dependencies
 var fs = require('fs');
 var auth = require('./auth.js');
-//var pdflib = require('pdf-text-extract');
+var extract = require('pdf-text-extract');
+var pdftotext = require('pdftotextjs');
 
 //file paths
 var configFile = '/etc/dmtk/pdf-rulefind-config.json';
@@ -21,6 +22,7 @@ function parseConfig() {
     return JSON.parse(fs.readFileSync(configFile, 'utf8'));
 }
 
+// Configures the rulebook directory in memory
 function configureRuleBookDir(config) {
     ruleBookDirConfigured = config.ruleDirectory;
     if (ruleBookDirConfigured != null && ruleBookDirConfigured != "") {
@@ -29,8 +31,8 @@ function configureRuleBookDir(config) {
     }
 }
 
+// Returns the set of books that the user is allowed to view
 function getAllAllowedBooks(userID, config) {
-    //fs.exists(ruleBookDir,function(exists){
     //get the directory contents
     var dirContents = fs.readdirSync(ruleBookDir);
     console.log("Rulebook directory contents:");
@@ -77,15 +79,25 @@ function getAllAllowedBooks(userID, config) {
     return json   
 }
 
-function getBookData(bookName, config) {
-
+function getAllowedSubset(userID, config,  bookSet) {
+    //stub 
+    return bookSet;
 }
 
+function getBookText(bookName) {
+    var path = ruleBookDir + '/' + bookName;
+    console.log(path);
+    pdf = new pdftotext(path);
+    //var data = pdf.getTextSync();
+    //return data;
+    return "stub";
+}
 
 
 module.exports = exports;
 module.exports.parseConfig = parseConfig;
 module.exports.configureRuleBookDir = configureRuleBookDir;
 module.exports.getAllAllowedBooks = getAllAllowedBooks;
-module.exports.getBookData = getBookData; 
+module.exports.getBookText = getBookText; 
+module.exports.getAllowedSubset = getAllowedSubset; 
 

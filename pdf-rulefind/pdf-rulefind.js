@@ -9,7 +9,7 @@ var fs = require('./fswrapper.js');
 //current user's id
 var userID = 0;
 
-
+// Process command line flags here (none yet)
 function cliHandler() {
 
 }
@@ -26,20 +26,32 @@ fs.configureRuleBookDir(config);
 var app = express();
 app.use(express.static(__dirname + '/public'));
 
-
+// Redirect to the index page
 app.get('/', function(req, res) {
     //res.send('Index')
     res.redirect('/pdf-rulefind.html');
 });
 
-
+// Start a search
 app.get('/search', function(req, res) {
-    console.log("books list: " + req.query.books);
-    console.log("keywords list: " + req.query.keywords);
+    var books = req.query.books;
+    var keywords = req.query.keywords;
+    console.log("books list: " + books);
+    console.log("keywords list: " + keywords);
+    
+    var bookSubset = fs.getAllowedSubset(userID, config, books);
+    var texts = [];
+    for (var index in bookSubset) {
+        textBody = fs.getBookText(bookSubset[index]);
+	title = bookSubset[index];
+	texts.push({key: title, value: textBody});
+	console.dir(textBody);
+    }
+    
     res.send('Search');
 });
 
-
+// Get the list of allowed books to search
 app.get('/books', function(req, res) {
     //var jsonContents = JSON.stringify(fs.getAllAllowedBooks(userID, config));
     var jsonContents = fs.getAllAllowedBooks(userID, config);
