@@ -1,8 +1,8 @@
 //Import dependencies
 var fs = require('fs');
+var async = require('async');
 var auth = require('./auth.js');
 var extract = require('pdf-text-extract');
-var pdftotext = require('pdftotextjs');
 
 //file paths
 var configFile = '/etc/dmtk/pdf-rulefind-config.json';
@@ -87,11 +87,15 @@ function getAllowedSubset(userID, config,  bookSet) {
 function getBookText(bookName) {
     var path = ruleBookDir + '/' + bookName;
     console.log(path);
-    pdf = new pdftotext(path);
+    //var pdftotext = require('pdftotextjs'), pdf = new pdftotext(path);
     //var data = pdf.getTextSync();
     //return data;
+    //    extract(path, function(err, pages) {
+    //        console.log(pages);	    
+    //    });
+    console.log("Got results for: " + bookName);
     return "stub";
-}
+} 
 
 
 module.exports = exports;

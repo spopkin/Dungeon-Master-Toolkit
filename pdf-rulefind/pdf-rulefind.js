@@ -1,8 +1,9 @@
 //Import dependencies
 var serveStatic = require('serve-static');
 var express = require('express');
-//var fs = require('fs');
+var async = require('async');
 var fs = require('./fswrapper.js');
+var wait = require('wait.for');
 //var pdflib = require('pdf-text-extract');
 
 
@@ -34,7 +35,7 @@ app.get('/', function(req, res) {
 
 // Start a search
 app.get('/search', function(req, res) {
-    var books = req.query.books;
+/*    var books = req.query.books;
     var keywords = req.query.keywords;
     console.log("books list: " + books);
     console.log("keywords list: " + keywords);
@@ -47,9 +48,44 @@ app.get('/search', function(req, res) {
 	texts.push({key: title, value: textBody});
 	console.dir(textBody);
     }
-    
+  
+   
+    //Prepare to populate the list of books to search.	
+    var books = req.query.books;
+    var keywords = req.query.keywords;
+    console.log("Books list: " + books);    
+    console.log("Keywords list: " + keywords);    
+    var bookSubset = fs.getAllowedSubset(userID, config, books);
+    var texts = [];
+
+    //set up conditions for later re-synchronization
+    var searched = [];
+    var bookArray = [];
+    for (var i = 0; i < bookSubset.length; i++) {
+        searched.push(false);
+	bookArray.push("");
+    }
+    var doneMapping = false;
+
+    bookArray = fs.getBookTexts(bookSubset);
+*/
+
+    wait.launchFiber(searchHelper, req, res);
+
     res.send('Search');
 });
+
+function searchHelper(req, res) {
+    var books = req.query.books;
+    var keywords = req.query.keywords;
+    console.log("books list: " + books);
+    console.log("keywords list: " + keywords);
+    
+    var bookSubset = fs.getAllowedSubset(userID, config, books);
+
+
+
+}
 
 // Get the list of allowed books to search
 app.get('/books', function(req, res) {
