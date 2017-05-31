@@ -3,7 +3,7 @@ var fs = require('fs');
 var async = require('async');
 var auth = require('./auth.js');
 var extract = require('pdf-text-extract');
-var db = null;
+var mongo = require('mongodb').MongoClient;
 
 //file paths
 var configFile = '/etc/dmtk/pdf-rulefind-config.json';
@@ -23,10 +23,10 @@ function parseConfig() {
     return JSON.parse(fs.readFileSync(configFile, 'utf8'));
 }
 
-//Sets the database driver
-function setDBDriver(dbDriver) {
-    this.db = dbDriver;
-}
+/*//Sets the database driver
+function initDB() {
+    this.databaseDriver = mongo;
+}*/
 
 // Configures the rulebook directory in memory
 function configureRuleBookDir(config) {
@@ -38,31 +38,74 @@ function configureRuleBookDir(config) {
     populateDB(config);
 }
 
-// Populte mongo with parsed pdf file data
+/*// Populte mongo with parsed pdf file data
 function populateDB(config) {
     var allowedBooks = JSON.parse(getAllAllowedBooks(dmsUserID, config));
-    for (var bookno in allowedBooks) {
-        var book = allowedBooks[bookno];
-	var length = allowedBooks.length;
-        console.log(book);
-	extract(ruleBookDir + '/' + book, function(err, pages){
-            if (err) {
-                console.log("bad book: " + book);
-            }
-	    //console.dir(pages);
-	    console.log("Finished extracting a book.");
-
-	    //TODO:  put this into mongo, so that it can be searched later.
-	});	
+    var length = allowedBooks.length;
+    console.log("" + length + " books detected.");
+    if (mongo == null) {
+	console.log("no db detected");
+	exit(1);
     }
+    for (var bookno in allowedBooks) {
+        //var book = allowedBooks[bookno];
+        //console.log(book);
+	populateBook(config, allowedBooks[bookno], parseInt(bookno) + 1, length, mongo);
+
+    }
+}
+*/// Populte mongo with parsed pdf file data
+function populateDB(config) {
+
+    var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
+        if(err)
+            throw err;
+        console.log("connected to the mongoDB !");
+        bookCollection = db.collection('books');
+	bookCollection.drop();
+
+        var allowedBooks = JSON.parse(getAllAllowedBooks(dmsUserID, config));
+        var length = allowedBooks.length;
+        console.log("Processing " + length + " books.");
+        if (mongo == null) {
+            console.log("no db detected");
+            exit(1);
+        }
+
+    	for (var bookno in allowedBooks) {
+            //var book = allowedBooks[bookno];
+            //console.log(book);
+            populateBook(config, allowedBooks[bookno], parseInt(bookno) + 1, length, bookCollection);
+        }
+    });
+}
+
+function populateBook(config, bookName, bookNo, bookSetSize, dbCollection) {
+    extract(ruleBookDir + '/' + bookName, function(err, pages){
+        if (err) {
+            console.log("bad book: " + bookName);
+        }
+	//console.dir(pages);
+	console.log("Finished extracting book " + bookNo + " of " + bookSetSize + ": " + bookName);
+
+        dbCollection.insert({name: bookName}, {$set: {pages: pages}}, {w:1}, function(err) {
+            if(err) {
+                console.log("Database error!");
+                throw err;
+            }
+            console.log('entry updated')
+        });
+    });	
+
+
 }
 
 // Returns the set of books that the user is allowed to view
 function getAllAllowedBooks(userID, config) {
     //get the directory contents
     var dirContents = fs.readdirSync(ruleBookDir);
-    console.log("Rulebook directory contents:");
-    console.log(dirContents);
+    console.log("Found " + dirContents.length + " books in the rule directory.");
+    //console.log(dirContents);
 
     var whiteListedBookArray = [];
 
@@ -124,5 +167,5 @@ module.exports.configureRuleBookDir = configureRuleBookDir;
 module.exports.getAllAllowedBooks = getAllAllowedBooks;
 module.exports.getBookText = getBookText; 
 module.exports.getAllowedSubset = getAllowedSubset; 
-module.exports.setDBDriver = setDBDriver; 
+//module.exports.initDB = initDB; 
 

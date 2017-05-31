@@ -5,7 +5,6 @@ var async = require('async');
 var fs = require('./fswrapper.js');
 var wait = require('wait.for');
 //var pdflib = require('pdf-text-extract');
-var mongo = require('mongodb').MongoClient;
 
 //current user's id
 var userID = 0;
@@ -21,7 +20,7 @@ cliHandler();
 var config = fs.parseConfig();
 console.log(config);
 fs.configureRuleBookDir(config);
-fs.setDBDriver(mongo);
+//fs.initDB();
 
 
 //Prepare to rest
@@ -102,7 +101,6 @@ app.get('/books', function(req, res) {
 });
 
 
-console.log('Started');
 console.log('Using ' + config.ruleDirectory + ' as rulebook directory.');
 
 app.listen(8080, function () {
