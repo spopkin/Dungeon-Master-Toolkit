@@ -3,6 +3,7 @@ var fs = require('fs');
 var async = require('async');
 var auth = require('./auth.js');
 var extract = require('pdf-text-extract');
+var db = null;
 
 //file paths
 var configFile = '/etc/dmtk/pdf-rulefind-config.json';
@@ -22,12 +23,37 @@ function parseConfig() {
     return JSON.parse(fs.readFileSync(configFile, 'utf8'));
 }
 
+//Sets the database driver
+function setDBDriver(dbDriver) {
+    this.db = dbDriver;
+}
+
 // Configures the rulebook directory in memory
 function configureRuleBookDir(config) {
     ruleBookDirConfigured = config.ruleDirectory;
     if (ruleBookDirConfigured != null && ruleBookDirConfigured != "") {
         console.log("Rulebook directory configured to be: " + ruleBookDirConfigured);
         ruleBookDir = ruleBookDirConfigured;
+    }
+    populateDB(config);
+}
+
+// Populte mongo with parsed pdf file data
+function populateDB(config) {
+    var allowedBooks = JSON.parse(getAllAllowedBooks(dmsUserID, config));
+    for (var bookno in allowedBooks) {
+        var book = allowedBooks[bookno];
+	var length = allowedBooks.length;
+        console.log(book);
+	extract(ruleBookDir + '/' + book, function(err, pages){
+            if (err) {
+                console.log("bad book: " + book);
+            }
+	    //console.dir(pages);
+	    console.log("Finished extracting a book.");
+
+	    //TODO:  put this into mongo, so that it can be searched later.
+	});	
     }
 }
 
@@ -87,12 +113,6 @@ function getAllowedSubset(userID, config,  bookSet) {
 function getBookText(bookName) {
     var path = ruleBookDir + '/' + bookName;
     console.log(path);
-    //var pdftotext = require('pdftotextjs'), pdf = new pdftotext(path);
-    //var data = pdf.getTextSync();
-    //return data;
-    //    extract(path, function(err, pages) {
-    //        console.log(pages);	    
-    //    });
     console.log("Got results for: " + bookName);
     return "stub";
 } 
@@ -104,4 +124,5 @@ module.exports.configureRuleBookDir = configureRuleBookDir;
 module.exports.getAllAllowedBooks = getAllAllowedBooks;
 module.exports.getBookText = getBookText; 
 module.exports.getAllowedSubset = getAllowedSubset; 
+module.exports.setDBDriver = setDBDriver; 
 

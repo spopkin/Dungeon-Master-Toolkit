@@ -5,7 +5,7 @@ var async = require('async');
 var fs = require('./fswrapper.js');
 var wait = require('wait.for');
 //var pdflib = require('pdf-text-extract');
-
+var mongo = require('mongodb').MongoClient;
 
 //current user's id
 var userID = 0;
@@ -21,11 +21,13 @@ cliHandler();
 var config = fs.parseConfig();
 console.log(config);
 fs.configureRuleBookDir(config);
+fs.setDBDriver(mongo);
 
 
 //Prepare to rest
 var app = express();
 app.use(express.static(__dirname + '/public'));
+
 
 // Redirect to the index page
 app.get('/', function(req, res) {
@@ -83,7 +85,10 @@ function searchHelper(req, res) {
     
     var bookSubset = fs.getAllowedSubset(userID, config, books);
 
+    for (var book in bookSubset) {
+	var currentBook = bookSubset[book];
 
+    }
 
 }
 
