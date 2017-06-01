@@ -23,10 +23,6 @@ function parseConfig() {
     return JSON.parse(fs.readFileSync(configFile, 'utf8'));
 }
 
-/*//Sets the database driver
-function initDB() {
-    this.databaseDriver = mongo;
-}*/
 
 // Configures the rulebook directory in memory
 function configureRuleBookDir(config) {
@@ -38,30 +34,13 @@ function configureRuleBookDir(config) {
     populateDB(config);
 }
 
-/*// Populte mongo with parsed pdf file data
-function populateDB(config) {
-    var allowedBooks = JSON.parse(getAllAllowedBooks(dmsUserID, config));
-    var length = allowedBooks.length;
-    console.log("" + length + " books detected.");
-    if (mongo == null) {
-	console.log("no db detected");
-	exit(1);
-    }
-    for (var bookno in allowedBooks) {
-        //var book = allowedBooks[bookno];
-        //console.log(book);
-	populateBook(config, allowedBooks[bookno], parseInt(bookno) + 1, length, mongo);
-
-    }
-}
-*/// Populte mongo with parsed pdf file data
 function populateDB(config) {
 
     var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
         if(err)
             throw err;
         console.log("connected to the mongoDB !");
-        bookCollection = db.collection('books');
+        var bookCollection = db.collection('books');
 	bookCollection.drop();
 
         var allowedBooks = JSON.parse(getAllAllowedBooks(dmsUserID, config));
@@ -73,8 +52,6 @@ function populateDB(config) {
         }
 
     	for (var bookno in allowedBooks) {
-            //var book = allowedBooks[bookno];
-            //console.log(book);
             populateBook(config, allowedBooks[bookno], parseInt(bookno) + 1, length, bookCollection);
         }
     });
@@ -88,7 +65,9 @@ function populateBook(config, bookName, bookNo, bookSetSize, dbCollection) {
 	//console.dir(pages);
 	console.log("Finished extracting book " + bookNo + " of " + bookSetSize + ": " + bookName);
 
-        dbCollection.insert({name: bookName}, {$set: {pages: pages}}, {w:1}, function(err) {
+	var insertion = {name: bookName, pageData: pages};
+	dbCollection.insert(insertion, {w: 1}, function(err) {
+//        dbCollection.insert({name: bookName, bookPages: JSON.stringify(pages)}, function(err) {
             if(err) {
                 console.log("Database error!");
                 throw err;
@@ -154,9 +133,24 @@ function getAllowedSubset(userID, config,  bookSet) {
 }
 
 function getBookText(bookName) {
-    var path = ruleBookDir + '/' + bookName;
-    console.log(path);
-    console.log("Got results for: " + bookName);
+    var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
+        if(err)
+            throw err;
+        console.log("connected to the mongoDB !");
+	var query = {"name": bookName};
+        var bookData = db.collection('books').find(query);
+
+	bookData.each(function(err, doc) {
+            if (doc != null) {
+                console.dir(doc);
+            } else {
+                return null;
+	    }
+	});
+
+        db.close();
+    });
+   
     return "stub";
 } 
 
@@ -167,5 +161,4 @@ module.exports.configureRuleBookDir = configureRuleBookDir;
 module.exports.getAllAllowedBooks = getAllAllowedBooks;
 module.exports.getBookText = getBookText; 
 module.exports.getAllowedSubset = getAllowedSubset; 
-//module.exports.initDB = initDB; 
 

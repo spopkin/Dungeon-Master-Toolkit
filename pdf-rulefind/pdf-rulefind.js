@@ -36,40 +36,6 @@ app.get('/', function(req, res) {
 
 // Start a search
 app.get('/search', function(req, res) {
-/*    var books = req.query.books;
-    var keywords = req.query.keywords;
-    console.log("books list: " + books);
-    console.log("keywords list: " + keywords);
-    
-    var bookSubset = fs.getAllowedSubset(userID, config, books);
-    var texts = [];
-    for (var index in bookSubset) {
-        textBody = fs.getBookText(bookSubset[index]);
-	title = bookSubset[index];
-	texts.push({key: title, value: textBody});
-	console.dir(textBody);
-    }
-  
-   
-    //Prepare to populate the list of books to search.	
-    var books = req.query.books;
-    var keywords = req.query.keywords;
-    console.log("Books list: " + books);    
-    console.log("Keywords list: " + keywords);    
-    var bookSubset = fs.getAllowedSubset(userID, config, books);
-    var texts = [];
-
-    //set up conditions for later re-synchronization
-    var searched = [];
-    var bookArray = [];
-    for (var i = 0; i < bookSubset.length; i++) {
-        searched.push(false);
-	bookArray.push("");
-    }
-    var doneMapping = false;
-
-    bookArray = fs.getBookTexts(bookSubset);
-*/
 
     wait.launchFiber(searchHelper, req, res);
 
@@ -86,7 +52,7 @@ function searchHelper(req, res) {
 
     for (var book in bookSubset) {
 	var currentBook = bookSubset[book];
-
+        var bookText = fs.getBookText(currentBook);
     }
 
 }
