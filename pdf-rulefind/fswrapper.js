@@ -153,7 +153,7 @@ function getBookText(bookName) {
 */
 
 //Then, use a passed search method in the callback
-function getBookTexts(bookArray, searchBookFunction, searchResultsFunction, callbackParams) {
+function getBookTexts(bookArray, searchBookFunction, searchResultsFunction, searchBookParams, SearchResultsParams) {
     var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
         console.log("connected to the mongoDB !");
         if(err)
@@ -176,7 +176,9 @@ function getBookTexts(bookArray, searchBookFunction, searchResultsFunction, call
 		//for each book in the set, search in it,
 		//then search for the best match from your results
 		console.log(doc['name']);
+		searchBookFunction(doc['pageData'], searchBookParams);
             } else {
+		console.log("Processed query");
                 return null;
 	    }
 	});

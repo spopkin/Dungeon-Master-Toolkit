@@ -3,6 +3,7 @@ var serveStatic = require('serve-static');
 var express = require('express');
 var async = require('async');
 var fs = require('./fswrapper.js');
+var search = require('./search-functions.js');
 var wait = require('wait.for');
 //var pdflib = require('pdf-text-extract');
 
@@ -65,9 +66,9 @@ function searchHelper(req, res) {
     console.log("keywords list: " + keywords);
     
     var bookSubset = fs.getAllowedSubset(userID, config, books);
-    fs.getBookTexts(bookSubset, null, null, res);
-
+    fs.getBookTexts(bookSubset, search.searchBook, null, keywords, res);
 }
+
 
 // Get the list of allowed books to search
 app.get('/books', function(req, res) {
