@@ -9,18 +9,34 @@ var wait = require('wait.for');
 //current user's id
 var userID = 0;
 
+var config = null;
+
 // Process command line flags here (none yet)
 function cliHandler() {
+    var initDB = false;
+    process.argv.forEach(function(val, index) {
+        if (val === '--help') {
+            console.log("usage: " + process.argv[0] + " " + process.argv[1] + " [--refresh-db] [--help]");
+            console.log("Then open your browser to localhost:8080/pdf-rulefind.html");
+	    process.exit();
+	} else if (val === '--refresh-db') {
+            console.log("Refreshing database.");
+	    initDB = true;
+	}
+    });
 
+    config = fs.parseConfig();
+    console.log(config);
+    fs.configureRuleBookDir(config);
+
+    if (initDB) {
+        fs.populateDB(config);
+    }
 }
 
 
 //Run setup tasks
 cliHandler();
-var config = fs.parseConfig();
-console.log(config);
-fs.configureRuleBookDir(config);
-//fs.initDB();
 
 
 //Prepare to rest
@@ -49,17 +65,12 @@ function searchHelper(req, res) {
     console.log("keywords list: " + keywords);
     
     var bookSubset = fs.getAllowedSubset(userID, config, books);
-
-    for (var book in bookSubset) {
-	var currentBook = bookSubset[book];
-        var bookText = fs.getBookText(currentBook);
-    }
+    fs.getBookTexts(bookSubset, null, null, res);
 
 }
 
 // Get the list of allowed books to search
 app.get('/books', function(req, res) {
-    //var jsonContents = JSON.stringify(fs.getAllAllowedBooks(userID, config));
     var jsonContents = fs.getAllAllowedBooks(userID, config);
     console.log("returning book list:");
     console.log(jsonContents);

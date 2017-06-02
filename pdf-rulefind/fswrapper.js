@@ -11,7 +11,6 @@ var ruleBookDirDefault = "/usr/share/dmtk/rulebooks";
 var ruleBookDir = ruleBookDirDefault;
 
 ////treat the user as a game master. 
-//var userIsDM = 0;
 
 //for now, uid 0 means you can see/use all books.
 var dmsUserID = 0;
@@ -31,7 +30,7 @@ function configureRuleBookDir(config) {
         console.log("Rulebook directory configured to be: " + ruleBookDirConfigured);
         ruleBookDir = ruleBookDirConfigured;
     }
-    populateDB(config);
+    //populateDB(config);
 }
 
 function populateDB(config) {
@@ -62,12 +61,10 @@ function populateBook(config, bookName, bookNo, bookSetSize, dbCollection) {
         if (err) {
             console.log("bad book: " + bookName);
         }
-	//console.dir(pages);
 	console.log("Finished extracting book " + bookNo + " of " + bookSetSize + ": " + bookName);
 
 	var insertion = {name: bookName, pageData: pages};
 	dbCollection.insert(insertion, {w: 1}, function(err) {
-//        dbCollection.insert({name: bookName, bookPages: JSON.stringify(pages)}, function(err) {
             if(err) {
                 console.log("Database error!");
                 throw err;
@@ -132,6 +129,7 @@ function getAllowedSubset(userID, config,  bookSet) {
     return bookSet;
 }
 
+/*
 function getBookText(bookName) {
     var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
         if(err)
@@ -150,15 +148,49 @@ function getBookText(bookName) {
 
         db.close();
     });
-   
     return "stub";
 } 
+*/
+
+//Then, use a passed search method in the callback
+function getBookTexts(bookArray, searchBookFunction, searchResultsFunction, callbackParams) {
+    var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
+        console.log("connected to the mongoDB !");
+        if(err)
+            throw err;
+
+        var orArray = [];
+        for (bookno in bookArray) {
+            var bookName = bookArray[bookno];
+            orArray[bookno] = {"name": bookName}; 
+	}	
+        var query = {$or: orArray};
+
+        var bookData = db.collection('books').find(query);
+
+
+	bookData.each(function(err, doc) {
+            if (doc != null) {
+                //console.dir(doc);
+		//TODO
+		//for each book in the set, search in it,
+		//then search for the best match from your results
+		console.log(doc['name']);
+            } else {
+                return null;
+	    }
+	});
+        db.close();
+    });
+
+}
 
 
 module.exports = exports;
 module.exports.parseConfig = parseConfig;
+module.exports.populateDB = populateDB;
 module.exports.configureRuleBookDir = configureRuleBookDir;
 module.exports.getAllAllowedBooks = getAllAllowedBooks;
-module.exports.getBookText = getBookText; 
+module.exports.getBookTexts = getBookTexts; 
 module.exports.getAllowedSubset = getAllowedSubset; 
 
