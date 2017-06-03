@@ -1,6 +1,6 @@
 //Import dependencies
 var fs = require('fs');
-var async = require('async');
+//var async = require('async');
 var auth = require('./auth.js');
 var extract = require('pdf-text-extract');
 var mongo = require('mongodb').MongoClient;
@@ -129,31 +129,9 @@ function getAllowedSubset(userID, config,  bookSet) {
     return bookSet;
 }
 
-/*
-function getBookText(bookName) {
-    var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
-        if(err)
-            throw err;
-        console.log("connected to the mongoDB !");
-	var query = {"name": bookName};
-        var bookData = db.collection('books').find(query);
-
-	bookData.each(function(err, doc) {
-            if (doc != null) {
-                console.dir(doc);
-            } else {
-                return null;
-	    }
-	});
-
-        db.close();
-    });
-    return "stub";
-} 
-*/
 
 //Then, use a passed search method in the callback
-function getBookTexts(bookArray, searchBookFunction, searchResultsFunction, searchBookParams, SearchResultsParams) {
+function getBookTexts(bookArray, searchBookFunction, searchResultsFunction, searchBookParams, searchResultsParams) {
     var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
         console.log("connected to the mongoDB !");
         if(err)
@@ -165,9 +143,8 @@ function getBookTexts(bookArray, searchBookFunction, searchResultsFunction, sear
             orArray[bookno] = {"name": bookName}; 
 	}	
         var query = {$or: orArray};
-
         var bookData = db.collection('books').find(query);
-
+	var resultSet = {};
 
 	bookData.each(function(err, doc) {
             if (doc != null) {
@@ -175,10 +152,13 @@ function getBookTexts(bookArray, searchBookFunction, searchResultsFunction, sear
 		//TODO
 		//for each book in the set, search in it,
 		//then search for the best match from your results
-		console.log(doc['name']);
-		searchBookFunction(doc['pageData'], searchBookParams);
+//		console.log(doc['name']);
+//		console.log(doc['pageData']);
+		resultSet[doc['name']] =  searchBookFunction(doc['pageData'], searchBookParams);
+//		resultSet.push(["" + doc['name'], searchBookFunction(doc['pageData'], searchBookParams)]);
             } else {
 		console.log("Processed query");
+		searchResultsFunction(resultSet, searchResultsParams);
                 return null;
 	    }
 	});

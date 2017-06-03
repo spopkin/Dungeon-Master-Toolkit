@@ -66,7 +66,7 @@ function searchHelper(req, res) {
     console.log("keywords list: " + keywords);
     
     var bookSubset = fs.getAllowedSubset(userID, config, books);
-    fs.getBookTexts(bookSubset, search.searchBook, null, keywords, res);
+    fs.getBookTexts(bookSubset, search.searchBook, search.searchResults, keywords, res);
 }
 
 
@@ -82,5 +82,5 @@ app.get('/books', function(req, res) {
 console.log('Using ' + config.ruleDirectory + ' as rulebook directory.');
 
 app.listen(8080, function () {
-      console.log('listening on port 8080')
+    console.log('listening on port 8080')
 })

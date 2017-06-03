@@ -1,52 +1,133 @@
+//Count how many keywords are found on a given page
 function searchPage(pageText, keywords) {
-    var results = {};
     var pageWords = pageText.split();
     var score = 0;
-    var scoreList = {};
-    for (var keywordIndex in keywords) {
-        var keyword = keywords[keywordIndex];
-	scoreList[keyword] = 0;
-    }
     for (var index in pageWords) {
         var currentWord = pageWords[index];
         for (var keywordIndex in keywords) {
-            var keyword = keywords[keywordIndex];
-            var matches = currentWord.match(/keyword/i);
-            for (var matchno in matches) {
-                scoreList[keyword]++;
+            var pattern = new RegExp(keywords[keywordIndex], "i")
+            if (pattern.test(currentWord)) {
                 score++;
             }
+            //var regex = new RegExp(/);
 	}
     }
-    results["overall"] = score;
-    results["words"] = scoreList;
-    console.log(JSON.stringify(results));
-    return results;
+//    console.log(score);
+    return score;
 }
 
+//Find the page in a given book with the most keyword matches
 function searchBook(pageArray, keywords) {
-/*    var resultsArray = {};
-    var bestPage = -1;
-    var wordSums = {};
-    for (var keywordIndex in keywords) {
-        var keyword = keywords[keywordIndex];
-        wordSums[keyword] = 0;
-    }
-    var totalSum = 0;
-*/
+    var results = [];
+    var bestPageSum = 0;
+    var bestPageNo = 0;
     for (pageno in pageArray) {
-        var pageResults = searchPage(pageArray[pageno], keywords);
-//	totalSum = totalSum + pageResults["overall"];
+        var pageSum = searchPage(pageArray[pageno], keywords);
+        if (pageSum > bestPageSum) {
+            bestPageSum = pageSum;
+            bestPageNo = parseInt(pageno) + 1;
+            results = [{"score": bestPageSum, "pageNo": bestPageNo}];
+        } else if (pageSum == bestPageSum) {
+            bestPageNo = parseInt(pageno) + 1;
+	    results.push({"score": bestPageSum, "pageNo": bestPageNo})
+        }
     }
- //   searchPage(pageArray[0], keywords)
-    return null;
+//    console.log(JSON.stringify(results)); 
+    return JSON.stringify(results);
+}
+
+//Sort and prune a set of results, then send the trimmed set
+//as a rest response.
+function searchResults(resultSets, res) {
+    var resultIndexArray = [];
+    
+    //Populate an array that
+    //we can use for quicksort.
+    for (var book in resultSets) {
+//        console.log(book);
+	var results = JSON.parse(resultSets[book]);
+        for (var pageResultNo in results) {
+            var pageResult = results[pageResultNo];
+//	    console.log(pageResult);
+	    resultIndexArray.push({book: book, result: pageResult});
+        }
+    }
+
+    for (var index in resultIndexArray) {
+      //  console.log(JSON.stringify(resultIndexArray[index]));
+    }
+
+    var sortedArray = quickSort(resultIndexArray, pivot(resultIndexArray));
+    for (var itemNo in sortedArray) {
+        console.log(JSON.stringify(sortedArray[itemNo]));
+    } 
 }
 
 
+function quickSort(arrayToSort, pivot) {
+    var breakIndex = 0;
+    var sortedArray = []; 
 
+    if (arrayToSort.length <= 1) {
+        return arrayToSort;
+    }
 
+    var noop = true;
+    for (var i = 0; i < arrayToSort.length; i++) {
+        var swapped = false;
+	var leftElem = arrayToSort[i]; 
+        var leftVal = parseInt(leftElem["result"]["score"]);
+        if (leftVal >= pivot) {
+            for (var j = arrayToSort.length - 1; j > i; j--) {
+                var rightElem = arrayToSort[j]; 
+                var rightVal = parseInt(rightElem["result"]["score"]);
+		if (rightVal < pivot) {
+                    //transpose right and left
+                    arrayToSort[i] = rightElem;
+		    arrayToSort[j] = leftElem;
+		    swapped = true;
+		    noop = false;
+		    console.log("swapped");
+		    break; //advance the left pointer
+                }
+            }
+            if (!swapped) {
+                console.log("Partitioning complete, split and recur.");
 
+                //make sure that we're sorted and not just choosing a bad pivot
+                if (noop && checkSort(arrayToSort)) {
+                    return arrayToSort; 
+                }
+               
+                break;
+//                break;
+            }
+//            console.log("" + leftElem["book"] + " (" + leftElem["result"]["pageNo"] + "): " + leftVal);
+	}
+    }
+
+//    console.log(pivot);
+    return sortedArray;
+}
+
+//Compute a pivot.
+function pivot(arrayToSort) {
+    return parseInt(arrayToSort[0]["result"]["score"]);
+}
+
+//Check if an array is sorted
+function checkSort(sortedArray) {
+    var prev = 0;
+    for (var index = 0; index < sortedArray.length; index++) {
+        var val = parseInt(sortedArray[index]["result"]["score"]);
+        if (val < prev) {
+            return false;
+        }
+    }
+    return true;
+}
 
 module.exports = exports;
 module.exports.searchPage = searchPage;
 module.exports.searchBook = searchBook;
+module.exports.searchResults = searchResults;
