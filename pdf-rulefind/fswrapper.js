@@ -1,6 +1,5 @@
 //Import dependencies
 var fs = require('fs');
-//var async = require('async');
 var auth = require('./auth.js');
 var extract = require('pdf-text-extract');
 var mongo = require('mongodb').MongoClient;
@@ -10,11 +9,11 @@ var configFile = '/etc/dmtk/pdf-rulefind-config.json';
 var ruleBookDirDefault = "/usr/share/dmtk/rulebooks";
 var ruleBookDir = ruleBookDirDefault;
 
-////treat the user as a game master. 
-
+//treat the user as a game master. 
 //for now, uid 0 means you can see/use all books.
 var dmsUserID = 0;
 
+//When this is imported, go ahead and parse the config files.
 parseConfig();
 
 //Read in and parse config file
@@ -30,9 +29,9 @@ function configureRuleBookDir(config) {
         console.log("Rulebook directory configured to be: " + ruleBookDirConfigured);
         ruleBookDir = ruleBookDirConfigured;
     }
-    //populateDB(config);
 }
 
+//Populate Mongo with the extracted text of all pdfs in the configured directory.
 function populateDB(config) {
 
     var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
@@ -56,6 +55,7 @@ function populateDB(config) {
     });
 }
 
+//Populate a specific book's entry in Mongodb
 function populateBook(config, bookName, bookNo, bookSetSize, dbCollection) {
     extract(ruleBookDir + '/' + bookName, function(err, pages){
         if (err) {
@@ -72,8 +72,6 @@ function populateBook(config, bookName, bookNo, bookSetSize, dbCollection) {
             console.log('entry updated')
         });
     });	
-
-
 }
 
 // Returns the set of books that the user is allowed to view
@@ -124,6 +122,7 @@ function getAllAllowedBooks(userID, config) {
     return json   
 }
 
+//Potential future feature: limitations on who may access what books.
 function getAllowedSubset(userID, config,  bookSet) {
     //stub 
     return bookSet;
@@ -148,18 +147,13 @@ function getBookTexts(bookArray, searchBookFunction, searchResultsFunction, sear
 
 	bookData.each(function(err, doc) {
             if (doc != null) {
-                //console.dir(doc);
-		//TODO
 		//for each book in the set, search in it,
-		//then search for the best match from your results
-//		console.log(doc['name']);
-//		console.log(doc['pageData']);
 		resultSet[doc['name']] =  searchBookFunction(doc['pageData'], searchBookParams);
-//		resultSet.push(["" + doc['name'], searchBookFunction(doc['pageData'], searchBookParams)]);
             } else {
 		console.log("Processed query");
+		//then search for the best match from your results
 		searchResultsFunction(resultSet, searchResultsParams);
-                return null;
+                return;
 	    }
 	});
         db.close();

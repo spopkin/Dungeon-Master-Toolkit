@@ -1,11 +1,9 @@
 //Import dependencies
 var serveStatic = require('serve-static');
 var express = require('express');
-var async = require('async');
 var fs = require('./fswrapper.js');
 var search = require('./search-functions.js');
 var wait = require('wait.for');
-//var pdflib = require('pdf-text-extract');
 
 //current user's id
 var userID = 0;
@@ -55,8 +53,6 @@ app.get('/', function(req, res) {
 app.get('/search', function(req, res) {
 
     wait.launchFiber(searchHelper, req, res);
-
-    res.send('Search');
 });
 
 function searchHelper(req, res) {
