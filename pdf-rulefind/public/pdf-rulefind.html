@@ -24,6 +24,18 @@
                     data: objToSend,
                     success: function( data ) { 
                         alert("submitted and got: " + data);
+                        var dataValues = JSON.parse(data);
+                        var resultList = document.getElementById("resultsList");
+                        for (var i in dataValues) {
+                            var resultItem = document.createElement('li');
+                            var bookName = dataValues[i]["book"];
+                            var score = dataValues[i]["result"]["score"];
+                            var pageNo = dataValues[i]["result"]["pageNo"];
+                            var listText = document.createTextNode("" + bookName + " page " + pageNo + ", score: " + score + " matches on that page.");
+                            resultItem.appendChild(listText);
+                            resultList.appendChild(resultItem);
+                        }
+
                     }
                 });
             }
@@ -83,8 +95,9 @@
                 <br/>
                 <input type="submit" value="Search for keywords" onclick="submitSearch()">
             </form>
-            <h3 hidden=true>Results:</h3>
-            <div id="resultsbox" hidden=true>
+            <div id="resultsbox">
+                <h2 id="resultsHeader">Top Results</h2>
+		<ol id="resultsList"></ol>
             </div>
         </body>
     </head>

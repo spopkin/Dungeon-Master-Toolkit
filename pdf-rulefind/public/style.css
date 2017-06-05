@@ -2,3 +2,9 @@
     background-color: black;
     color: white;
 }
+
+.resultsBox {
+    visibility: hidden;
+}
+
+
