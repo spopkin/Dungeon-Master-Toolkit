@@ -30,11 +30,18 @@ The following commands will install the dependencies for the rulefinding tool
 First, make sure that npm and nodejs are installed, then run the following commands.
 
 ```
-$npm install -g connect serve-static express fs 
+$yum -y install mongodb-server  #install Mongo on your system #or apt -y install mongodb
 
-$npm link connect && npm link serve-static && npm link express && npm link fs 
+$npm install -g mongodb pdf-text-extract serve-static express fs wait.for
+
+$npm link mongodb pdf-text-extract serve-static express fs wait.for
 ```
 
 You will need to copy the config file to the appropriate place on your filesystem and edit it to make it actually be useful.  The file is located at pdf-rulefind/files/pdf-rulefind-config.json.example.
-Additionally, the rule directory pointed to by the file must exist, so create it if you need to.
+Additionally, the rule directory pointed to by the file must exist, so create it.  Put any pdf files that you will want to search in the rule directory.  In the config file, the default location is /usr/local/dmtk.  The config file also contains entries relating to the blacklisting and whitelisting of books.  By editing the lists of books and the setting for whether dungeon masters override the available book set, it is possible to restrict the books searched within the rulebook directory to only a subset.  
 
+Before you can run the program, MongoDB must be running.  On Centos, this can be started with systemctl start mongod.
+
+Finally, on the first run, the pdf files' text must be extracted using the `--refresh-db` flag.
+
+After the dependencies are installed, the books are in the right directory, and the database is configured, the utility can be used via the webpage served at localhost:8080.

@@ -1,6 +1,5 @@
 {
-  "ruleDirectory": "/usr/share/dmtk/rulebooks",
-  "databaseDir": "/usr/share/mongo/dmtk",
+  "ruleDirectory": "/usr/local/dmtk/rulebooks",
   "dmsOverrideBlackWhiteLists": 1,
   "bookWhiteList": ["book1.pdf", "book2.pdf", "book3.pdf"],
   "bookBlackList": ["book1.pdf", "book2.pdf", "book3.pdf"]
