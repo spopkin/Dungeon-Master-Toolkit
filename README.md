@@ -66,3 +66,5 @@ $node dice-roller.js 3 6
 #### Pdf RuleFinder
 
 This utility is started like any other node webapp, using the syntax: `node pdf-rulefinder.js`.  To rebuild the database of extracted PDF text, use the `--refresh-db` flag.
+
+To actually use the application, just navigate to `localhost:8080/pdf-rulefind.html`, fill out the text input, select some books to search, and submit the search. 
