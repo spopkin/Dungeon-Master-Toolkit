@@ -1,7 +1,0 @@
-{
-  "ruleDirectory": "/usr/share/dmtk/rulebooks",
-  "dmsOverrideBlackWhiteLists": 1,
-  "bookWhiteList": ["book1.pdf", "book2.pdf", "book3.pdf"],
-  "bookBlackList": ["book1.pdf", "book2.pdf", "book3.pdf"]
-
-}
