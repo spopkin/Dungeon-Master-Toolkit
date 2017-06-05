@@ -53,7 +53,7 @@ After the dependencies are installed, the books are in the right directory, and 
 The dice roller can be invoked with the following syntax. 
 
 ```
-#node dice-roller.js <num_dice> <number_of_sides_per_die>
+$node dice-roller.js <num_dice> <number_of_sides_per_die>
 ```
 
 As an example, the following run simulates rolling three dice with six sides each.
