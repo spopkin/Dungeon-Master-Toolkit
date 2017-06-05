@@ -8,9 +8,9 @@ Tabletop gaming utilities, for those who want to try a digital table.
 
 Rolls a specified number of dice of a given size.  If you need to roll 20 instances of 8-sided dice, it may be faster than doing so phyisically.
 
-### PDF Rule Finder
+### PDF RuleFinder
 
-Searches every pdf file in a configured directory for a set of given keywords to find what pages they appear in and in what file.  Useful for finding rules regarding specific terms.  
+Searches a set of PDF files to find the book and page that most closely matches the keywords searched for, such as when looking for a particular D&D rule, or something specific in a technical manual.
 
 ## The technologies:
 
@@ -24,7 +24,7 @@ Primarily, nodejs.  There will probably be more JavaScript libraries as I get de
 
 You will need to have nodejs installed.
 
-#### Pdf-Rulefinder
+#### Pdf RuleFinder
 
 The following commands will install the dependencies for the rulefinding tool
 First, make sure that npm and nodejs are installed, then run the following commands.
@@ -45,3 +45,24 @@ Before you can run the program, MongoDB must be running.  On Centos, this can be
 Finally, on the first run, the pdf files' text must be extracted using the `--refresh-db` flag.
 
 After the dependencies are installed, the books are in the right directory, and the database is configured, the utility can be used via the webpage served at localhost:8080.
+
+### Usage
+
+#### Dice roller
+
+The dice roller can be invoked with the following syntax. 
+
+```
+#node dice-roller.js <num_dice> <number_of_sides_per_die>
+```
+
+As an example, the following run simulates rolling three dice with six sides each.
+
+
+```
+$node dice-roller.js 3 6
+```  
+
+#### Pdf RuleFinder
+
+This utility is started like any other node webapp, using the syntax: `node pdf-rulefinder.js`.  To rebuild the database of extracted PDF text, use the `--refresh-db` flag.
