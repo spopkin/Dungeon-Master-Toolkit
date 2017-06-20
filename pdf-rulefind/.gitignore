@@ -1,0 +1,5 @@
+# Ignore vim tempfiles
+*~
+
+# Ignore nodejs modules directory
+node_modules/

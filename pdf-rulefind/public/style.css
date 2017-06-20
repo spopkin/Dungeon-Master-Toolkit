@@ -3,8 +3,28 @@
     color: white;
 }
 
-.resultsBox {
-    visibility: hidden;
+
+.OuterContainer {
+    max-width: 480px;
+    position: relative;
+    left: 30%;
 }
 
+.SelectionSetControl {
+    width: 50%;
+    float: left;
+    display: inline;
+}
 
+.BookList {
+    clear: left;
+    width: 100%;
+}
+
+.Submit {
+    width: 100%;
+}
+
+#keyword-list {
+    width: 100%;
+}

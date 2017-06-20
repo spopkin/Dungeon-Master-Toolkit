@@ -23,7 +23,7 @@
                     type: 'GET',
                     data: objToSend,
                     success: function( data ) { 
-                        alert("submitted and got: " + data);
+                        //alert("submitted and got: " + data);
                         var dataValues = JSON.parse(data);
                         var resultList = document.getElementById("resultsList");
                         for (var i in dataValues) {
@@ -31,7 +31,7 @@
                             var bookName = dataValues[i]["book"];
                             var score = dataValues[i]["result"]["score"];
                             var pageNo = dataValues[i]["result"]["pageNo"];
-                            var listText = document.createTextNode("" + bookName + " page " + pageNo + ", score: " + score + " matches on that page.");
+                            var listText = document.createTextNode("" + bookName + " page " + pageNo + ", score: " + score + " matches");
                             resultItem.appendChild(listText);
                             resultList.appendChild(resultItem);
                         }
@@ -80,24 +80,26 @@
             "Search Rulebook Library"
         </title>
         <body onload="populateBookList();">
-            <h1>Search PDF Rulebooks for specific rules</h1>
-            <form onsubmit="return false">
-                <label for="keyword-list">List of keywords to search for:</label>
-                <br/>
-                <input type="text" id="keyword-list" placeholder="keywords">
-                <br/>
-                <br/>
-                <button onclick="selectAll()">Select All</button>
-                <button onclick="deSelectAll()">Deselect All</button>
-                <br/>
-                <select multiple id="booklist">
-                </select>
-                <br/>
-                <input type="submit" value="Search for keywords" onclick="submitSearch()">
-            </form>
-            <div id="resultsbox">
-                <h2 id="resultsHeader">Top Results</h2>
-		<ol id="resultsList"></ol>
+            <div class="OuterContainer">
+                <h1>Search PDF Rulebooks for Specific Rules</h1>
+                <form onsubmit="return false">
+                    <label for="keyword-list">List of keywords to search for:</label>
+                    <br/>
+                    <input type="text" id="keyword-list" placeholder="keywords">
+                    <br/>
+                    <br/>
+                    <button class="SelectionSetControl" onclick="selectAll()">Select All</button>
+                    <button class="SelectionSetControl"  onclick="deSelectAll()">Deselect All</button>
+                    <br/>
+                    <select class="BookList" multiple id="booklist">
+                    </select>
+                    <br/>
+                    <input class="Submit" type="submit" value="Search for keywords" onclick="submitSearch()">
+                </form>
+                <div id="resultsbox">
+                    <h2 id="resultsHeader">Top Results</h2>
+                    <ol id="resultsList"></ol>
+                </div>
             </div>
         </body>
     </head>
