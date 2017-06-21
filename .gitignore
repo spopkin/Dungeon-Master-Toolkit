@@ -3,3 +3,4 @@
 
 # Ignore nodejs modules directory
 node_modules/
+*/node_modules/
