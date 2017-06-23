@@ -18,6 +18,10 @@ app.get('/', function(req, res) {
 	res.redirect('/charsheet-tool.html');
 });
 
+app.get('/get-auth', function(req, res) {
+	res.send('token');
+});
+
 app.listen(8080, function() {
 	console.log('listening on port 8080');
 });
