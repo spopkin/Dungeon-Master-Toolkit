@@ -10,3 +10,17 @@ function checkAuth() {
 
     }); 
 }
+
+function getAuthTimes() {
+    $(document).ready(function() {
+        var objToSend = {};
+        $.ajax({
+            url: 'http://localhost:8080/get-auth-times',
+            type: 'GET',
+            data: objToSend,
+            success: function( data ) {
+                alert(data);
+            }
+        });
+    });
+}
