@@ -35,11 +35,10 @@ function configureRuleBookDir(config) {
 function populateDB(config) {
 
     var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
-        if(err)
-            throw err;
+        if (err) throw err;
         console.log("connected to the mongoDB !");
         var bookCollection = db.collection('books');
-	bookCollection.drop();
+        bookCollection.drop();
 
         var allowedBooks = JSON.parse(getAllAllowedBooks(dmsUserID, config));
         var length = allowedBooks.length;
@@ -49,7 +48,7 @@ function populateDB(config) {
             exit(1);
         }
 
-    	for (var bookno in allowedBooks) {
+        for (var bookno in allowedBooks) {
             populateBook(config, allowedBooks[bookno], parseInt(bookno) + 1, length, bookCollection);
         }
     });
@@ -57,21 +56,26 @@ function populateDB(config) {
 
 //Populate a specific book's entry in Mongodb
 function populateBook(config, bookName, bookNo, bookSetSize, dbCollection) {
-    extract(ruleBookDir + '/' + bookName, function(err, pages){
+    extract(ruleBookDir + '/' + bookName, function(err, pages) {
         if (err) {
             console.log("bad book: " + bookName);
         }
-	console.log("Finished extracting book " + bookNo + " of " + bookSetSize + ": " + bookName);
+        console.log("Finished extracting book " + bookNo + " of " + bookSetSize + ": " + bookName);
 
-	var insertion = {name: bookName, pageData: pages};
-	dbCollection.insert(insertion, {w: 1}, function(err) {
-            if(err) {
+        var insertion = {
+            name: bookName,
+            pageData: pages
+        };
+        dbCollection.insert(insertion, {
+            w: 1
+        }, function(err) {
+            if (err) {
                 console.log("Database error!");
                 throw err;
             }
             console.log('entry updated')
         });
-    });	
+    });
 }
 
 // Returns the set of books that the user is allowed to view
@@ -97,7 +101,7 @@ function getAllAllowedBooks(userID, config) {
         for (var index in dirContents) {
             if (whitelist.indexOf(dirContents[index]) > -1) {
                 whiteListedBookArray.push(dirContents[index]);
-            } 
+            }
         }
     } else {
         console.log("whitelisting disabled");
@@ -119,11 +123,11 @@ function getAllAllowedBooks(userID, config) {
         console.log("blacklisting disabled");
     }
     var json = JSON.stringify(whiteListedBookArray);
-    return json   
+    return json
 }
 
 //Potential future feature: limitations on who may access what books.
-function getAllowedSubset(userID, config,  bookSet) {
+function getAllowedSubset(userID, config, bookSet) {
     //stub 
     return bookSet;
 }
@@ -133,29 +137,32 @@ function getAllowedSubset(userID, config,  bookSet) {
 function getBookTexts(bookArray, searchBookFunction, searchResultsFunction, searchBookParams, searchResultsParams) {
     var db = mongo.connect('mongodb://127.0.0.1:27017/dmtk', function(err, db) {
         console.log("connected to the mongoDB !");
-        if(err)
-            throw err;
+        if (err) throw err;
 
         var orArray = [];
         for (bookno in bookArray) {
             var bookName = bookArray[bookno];
-            orArray[bookno] = {"name": bookName}; 
-	}	
-        var query = {$or: orArray};
+            orArray[bookno] = {
+                "name": bookName
+            };
+        }
+        var query = {
+            $or: orArray
+        };
         var bookData = db.collection('books').find(query);
-	var resultSet = {};
+        var resultSet = {};
 
-	bookData.each(function(err, doc) {
+        bookData.each(function(err, doc) {
             if (doc != null) {
-		//for each book in the set, search in it,
-		resultSet[doc['name']] =  searchBookFunction(doc['pageData'], searchBookParams);
+                //for each book in the set, search in it,
+                resultSet[doc['name']] = searchBookFunction(doc['pageData'], searchBookParams);
             } else {
-		console.log("Processed query");
-		//then search for the best match from your results
-		searchResultsFunction(resultSet, searchResultsParams);
+                console.log("Processed query");
+                //then search for the best match from your results
+                searchResultsFunction(resultSet, searchResultsParams);
                 return;
-	    }
-	});
+            }
+        });
         db.close();
     });
 
@@ -167,6 +174,5 @@ module.exports.parseConfig = parseConfig;
 module.exports.populateDB = populateDB;
 module.exports.configureRuleBookDir = configureRuleBookDir;
 module.exports.getAllAllowedBooks = getAllAllowedBooks;
-module.exports.getBookTexts = getBookTexts; 
-module.exports.getAllowedSubset = getAllowedSubset; 
-
+module.exports.getBookTexts = getBookTexts;
+module.exports.getAllowedSubset = getAllowedSubset;

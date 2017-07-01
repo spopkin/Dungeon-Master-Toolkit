@@ -17,11 +17,11 @@ function cliHandler() {
         if (val === '--help') {
             console.log("usage: " + process.argv[0] + " " + process.argv[1] + " [--refresh-db] [--help]");
             console.log("Then open your browser to localhost:8080/pdf-rulefind.html");
-	    process.exit();
-	} else if (val === '--refresh-db') {
+            process.exit();
+        } else if (val === '--refresh-db') {
             console.log("Refreshing database.");
-	    initDB = true;
-	}
+            initDB = true;
+        }
     });
 
     config = fs.parseConfig();
@@ -60,7 +60,7 @@ function searchHelper(req, res) {
     var keywords = req.query.keywords;
     console.log("books list: " + books);
     console.log("keywords list: " + keywords);
-    
+
     var bookSubset = fs.getAllowedSubset(userID, config, books);
     fs.getBookTexts(bookSubset, search.searchBook, search.searchResults, keywords, res);
 }
@@ -77,6 +77,6 @@ app.get('/books', function(req, res) {
 
 console.log('Using ' + config.ruleDirectory + ' as rulebook directory.');
 
-app.listen(8080, function () {
+app.listen(8080, function() {
     console.log('listening on port 8080')
 })

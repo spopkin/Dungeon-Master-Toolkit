@@ -9,7 +9,7 @@ function searchPage(pageText, keywords) {
             if (pattern.test(currentWord)) {
                 score++;
             }
-	}
+        }
     }
     return score;
 }
@@ -24,10 +24,16 @@ function searchBook(pageArray, keywords) {
         if (pageSum > bestPageSum) {
             bestPageSum = pageSum;
             bestPageNo = parseInt(pageno) + 1;
-            results = [{"score": bestPageSum, "pageNo": bestPageNo}];
+            results = [{
+                "score": bestPageSum,
+                "pageNo": bestPageNo
+            }];
         } else if (pageSum == bestPageSum) {
             bestPageNo = parseInt(pageno) + 1;
-	    results.push({"score": bestPageSum, "pageNo": bestPageNo})
+            results.push({
+                "score": bestPageSum,
+                "pageNo": bestPageNo
+            })
         }
     }
     return JSON.stringify(results);
@@ -36,14 +42,17 @@ function searchBook(pageArray, keywords) {
 //Sort and a set of results, then send the trimmed set as a rest response.
 function searchResults(resultSets, res) {
     var resultIndexArray = [];
-    
+
     //Populate an array that
     //we can use for quicksort.
     for (var book in resultSets) {
-	var results = JSON.parse(resultSets[book]);
+        var results = JSON.parse(resultSets[book]);
         for (var pageResultNo in results) {
             var pageResult = results[pageResultNo];
-	    resultIndexArray.push({book: book, result: pageResult});
+            resultIndexArray.push({
+                book: book,
+                result: pageResult
+            });
         }
     }
 
@@ -56,7 +65,9 @@ function sortValues(arrayToSort) {
     for (var elem in arrayToSort) {
         tmpAry.push([arrayToSort[elem]["result"]["score"], arrayToSort[elem]]);
     }
-    tmpAry = tmpAry.sort(function(a, b) {return b[0] - a[0]});
+    tmpAry = tmpAry.sort(function(a, b) {
+        return b[0] - a[0]
+    });
     var tmp2Ary = [];
     for (elem in tmpAry) {
         tmp2Ary[elem] = tmpAry[elem][1];
