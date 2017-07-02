@@ -5,10 +5,10 @@ function goToAuthPage() {
 }
 
 function checkAuth() {
-    $(document).ready(function(){
+    $(document).ready(function() {
         var storedKey = localStorage.getItem('authToken');
 
-    }); 
+    });
 }
 
 function getAuthTimes() {
@@ -18,7 +18,7 @@ function getAuthTimes() {
             url: 'http://localhost:8080/get-auth-times',
             type: 'GET',
             data: objToSend,
-            success: function( data ) {
+            success: function(data) {
                 alert(data);
             }
         });
